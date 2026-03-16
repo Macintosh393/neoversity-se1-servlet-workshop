@@ -35,5 +35,27 @@
   </dependencies>
   <build>
     <finalName>neoversity-se1-servlet-workshop</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>3.4.0</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.cargo</groupId>
+        <artifactId>cargo-maven3-plugin</artifactId>
+        <version>1.10.15</version> <configuration>
+        <container>
+          <containerId>tomcat10x</containerId> <type>embedded</type>
+        </container>
+        <configuration>
+          <properties>
+            <cargo.servlet.port>8080</cargo.servlet.port>
+          </properties>
+        </configuration>
+      </configuration>
+      </plugin>
+    </plugins>
   </build>
 </project>
