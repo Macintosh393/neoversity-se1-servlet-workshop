@@ -12,15 +12,18 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 public class NotesServlet extends HttpServlet {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final Map<String, Note> notes = new ConcurrentHashMap<>();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        Map<String, Note> notes = (Map<String, Note>) getServletContext().getAttribute("notes");
+        AtomicLong requestCounter = (AtomicLong) getServletContext().getAttribute("requestCounter");
+        requestCounter.incrementAndGet();
         String pathInfo = req.getPathInfo();
         if (pathInfo == null) {
             resp.setStatus(HttpServletResponse.SC_OK);
@@ -42,6 +45,9 @@ public class NotesServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        Map<String, Note> notes = (Map<String, Note>) getServletContext().getAttribute("notes");
+        AtomicLong requestCounter = (AtomicLong) getServletContext().getAttribute("requestCounter");
+        requestCounter.incrementAndGet();
         String body = req.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
         Note note = objectMapper.readValue(body, Note.class);
         if (note.getTitle() == null || note.getTitle().isEmpty()) {
@@ -59,6 +65,10 @@ public class NotesServlet extends HttpServlet {
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        Map<String, Note> notes = (Map<String, Note>) getServletContext().getAttribute("notes");
+        AtomicLong requestCounter = (AtomicLong) getServletContext().getAttribute("requestCounter");
+
+        requestCounter.incrementAndGet();
         String noteId = req.getPathInfo().substring(1);
         Note note = notes.remove(noteId);
 
